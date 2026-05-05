@@ -68,7 +68,9 @@ app.use("/public", express.static(path.join(__dirname, "public")));
 // Routes
 app.use("/api/users", userRoutes);
 
- 
+ app.get("/", (req, res) => {
+  res.send("KAO FARM Backend is Running 🚀");
+});
 
 const PORT = process.env.PORT || 5000;
 

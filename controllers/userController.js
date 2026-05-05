@@ -177,6 +177,7 @@
 
 
 const User = require("../models/User");
+ const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
 
 console.log("EMAIL_USER:", process.env.EMAIL_USER);
@@ -204,9 +205,7 @@ const sendRegistrationMail = async (userEmail, userName, userId) => {
   <div style="max-width:600px; margin:auto; background:#ffffff; border-radius:10px; overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,0.08);">
     
 
-  <!--<div style="background:#0a2540; padding:20px;">
-    <img src="https://kao-farm.onrender.com/public/logo.png" height="40" />
-   </div> -->
+  
 
 
     <!-- Header -->
@@ -263,15 +262,13 @@ const sendAdminNotification = async (userData) => {
   try {
     const info = await transporter.sendMail({
       from: process.env.EMAIL_USER,
-      to: process.env.ADMIN_EMAIL, // 👉 admin email (can be different)
+      to: process.env.ADMIN_EMAIL,  
       subject: "🆕 New User Registration",
       html: `
 <div style="font-family: Arial, sans-serif; background:#f4f6f8; padding:30px;">
   <div style="max-width:600px; margin:auto; background:#ffffff; border-radius:10px; overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,0.08);">
     
- <!-- <div style="background:#111827; padding:20px;">
-     <img src="https://kao-farm.onrender.com/public/logo.png" height="35" />
-     </div> -->
+ 
      
 
     <!-- Header -->
@@ -342,75 +339,75 @@ const sendAdminNotification = async (userData) => {
 // =========================
 // REGISTER USER
 // =========================
- const bcrypt = require("bcryptjs");
-
-const registerUser = async (req, res) => {
-  try {
-    const { name, email, phone, password, dob, address, photo } = req.body;
-
-    if (!name || !email || !phone || !password) {
-      return res.status(400).json({
-        message: "All fields are required",
-      });
-    }
-
-    // const existingUser = await User.findOne({ email });
-
-    // if (existingUser) {
-    //   return res.status(400).json({
-    //     message: "Email already exists, please login",
-    //   });
-    // }
-
-    const existingUser = await User.findOne({ email });
-
-if (existingUser) {
-  console.log("Duplicate registration blocked:", email);
-
-  return res.status(400).json({
-    message: "Email already exists, please login",
-  });
-}
 
 
-    // ✅ Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
+// const registerUser = async (req, res) => {
+//   try {
+//     const { name, email, phone, password, dob, address, photo } = req.body;
 
-        // const generatedUserId = `KAO-${Math.floor(100000 + Math.random() * 900000)}`;
-        const generatedUserId = `KAO-${Date.now().toString().slice(-6)}`;
+//     if (!name || !email || !phone || !password) {
+//       return res.status(400).json({
+//         message: "All fields are required",
+//       });
+//     }
+
+//     // const existingUser = await User.findOne({ email });
+
+//     // if (existingUser) {
+//     //   return res.status(400).json({
+//     //     message: "Email already exists, please login",
+//     //   });
+//     // }
+
+//     const existingUser = await User.findOne({ email });
+
+// if (existingUser) {
+//   console.log("Duplicate registration blocked:", email);
+
+//   return res.status(400).json({
+//     message: "Email already exists, please login",
+//   });
+// }
 
 
-    const newUser = await User.create({
+//     // ✅ Hash password
+//     const hashedPassword = await bcrypt.hash(password, 10);
+
+//         // const generatedUserId = `KAO-${Math.floor(100000 + Math.random() * 900000)}`;
+//         const generatedUserId = `KAO-${Date.now().toString().slice(-6)}`;
+
+
+//     const newUser = await User.create({
       
-      name,
-      email,
-      phone,
-      password: hashedPassword,
-      dob,
-      address,
-      photo,
-      userId: generatedUserId,
-    });
+//       name,
+//       email,
+//       phone,
+//       password: hashedPassword,
+//       dob,
+//       address,
+//       photo,
+//       userId: generatedUserId,
+//     });
 
 
-    console.log("✅ USER SAVED AFTER PAYMENT:", email);
+//     console.log("✅ USER SAVED AFTER PAYMENT:", email);
 
-    await sendRegistrationMail(newUser.email, newUser.name, newUser.userId);
-    await sendAdminNotification(newUser);
+//     sendRegistrationMail(newUser.email, newUser.name, newUser.userId);
+//     sendAdminNotification(newUser);
 
-    res.status(201).json({
-      message: "User registered successfully",
-        userId: newUser.userId, 
-      user: newUser,
-      debug: "USER SAVED AFTER PAYMENT"
-    });
+//     res.status(201).json({
+//       message: "User registered successfully",
+//         userId: newUser.userId, 
+//       user: newUser,
+//       debug: "USER SAVED AFTER PAYMENT"
+//     });
 
-  } catch (error) {
-    res.status(500).json({
-      message: "Server error",
-    });
-  }
-};
+//   } catch (error) {
+//     res.status(500).json({
+//       message: "Server error",
+//     });
+//   }
+// };
 
 // =========================
 // GET USER BY EMAIL
@@ -443,6 +440,117 @@ if (existingUser) {
 //     });
 //   }
 // };
+
+
+
+
+ 
+
+const registerUser = async (req, res) => {
+  try {
+    const {
+      name,
+      email,
+      phone,
+      password,
+      dob,
+      address,
+      photo,
+      payment,
+    } = req.body;
+
+    // =========================
+    // 1. VALIDATION
+    // =========================
+    if (!name || !email || !phone || !password) {
+      return res.status(400).json({
+        message: "All required fields must be filled",
+      });
+    }
+
+    // =========================
+    // 2. PAYMENT CHECK (IMPORTANT)
+    // =========================
+    if (!payment || payment.status !== "success") {
+      return res.status(400).json({
+        message: "Payment not completed",
+      });
+    }
+
+    // =========================
+    // 3. DUPLICATE CHECK
+    // =========================
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      return res.status(400).json({
+        message: "Email already exists, please login",
+      });
+    }
+
+    // =========================
+    // 4. HASH PASSWORD
+    // =========================
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // =========================
+    // 5. GENERATE USER ID
+    // =========================
+    const generatedUserId = `KAO-${Date.now().toString().slice(-6)}`;
+
+    // =========================
+    // 6. SAVE USER (ONLY AFTER PAYMENT OK)
+    // =========================
+    const newUser = await User.create({
+      name,
+      email,
+      phone,
+      password: hashedPassword,
+      dob,
+      address,
+      photo,
+      userId: generatedUserId,
+    });
+
+    console.log("✅ USER SAVED AFTER PAYMENT:", email);
+
+    // =========================
+    // 7. RESPONSE FIRST (FAST UI)
+    // =========================
+    res.status(201).json({
+      message: "User registered successfully",
+      userId: newUser.userId,
+      debug: "USER SAVED AFTER PAYMENT",
+    });
+
+    // =========================
+    // 8. EMAILS (NON-BLOCKING)
+    // =========================
+    setImmediate(() => {
+      sendRegistrationMail(
+        newUser.email,
+        newUser.name,
+        newUser.userId
+      );
+
+      sendAdminNotification(newUser);
+    });
+
+  } catch (error) {
+    console.error("REGISTER ERROR:", error);
+
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
+};
+
+ 
+
+
+
+
+
 
 const getUser = async (req, res) => {
   try {

@@ -204,9 +204,9 @@ const sendRegistrationMail = async (userEmail, userName, userId) => {
   <div style="max-width:600px; margin:auto; background:#ffffff; border-radius:10px; overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,0.08);">
     
 
-  <div style="background:#0a2540; padding:20px;">
-      <img src="https://kao-farm.onrender.com/public/logo.png" height="40" />
-    </div>
+  // <div style="background:#0a2540; padding:20px;">
+  //     <img src="https://kao-farm.onrender.com/public/logo.png" height="40" />
+  //   </div>
 
 
     <!-- Header -->
@@ -269,9 +269,9 @@ const sendAdminNotification = async (userData) => {
 <div style="font-family: Arial, sans-serif; background:#f4f6f8; padding:30px;">
   <div style="max-width:600px; margin:auto; background:#ffffff; border-radius:10px; overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,0.08);">
     
-  <div style="background:#111827; padding:20px;">
-      <img src="https://kao-farm.onrender.com/public/logo.png" height="35" />
-    </div>
+  // <div style="background:#111827; padding:20px;">
+  //     <img src="https://kao-farm.onrender.com/public/logo.png" height="35" />
+  //   </div>
 
     <!-- Header -->
     <div style="background:#111827; color:#fff; padding:20px 30px;">

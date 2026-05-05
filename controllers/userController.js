@@ -205,7 +205,7 @@ const sendRegistrationMail = async (userEmail, userName, userId) => {
     
 
   <div style="background:#0a2540; padding:20px;">
-      <img src="http://localhost:5000/public/logo.png" height="40" />
+      <img src="https://kao-farm.onrender.com/public/logo.png" height="40" />
     </div>
 
 
@@ -270,7 +270,7 @@ const sendAdminNotification = async (userData) => {
   <div style="max-width:600px; margin:auto; background:#ffffff; border-radius:10px; overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,0.08);">
     
   <div style="background:#111827; padding:20px;">
-      <img src="http://localhost:5000/public/logo.png" height="35" />
+      <img src="https://kao-farm.onrender.com/public/logo.png" height="35" />
     </div>
 
     <!-- Header -->

@@ -191,6 +191,17 @@ const transporter = nodemailer.createTransport({
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS, // ⚠️ use Gmail App Password
   },
+   tls: {
+    rejectUnauthorized: false, // 🔥 helps avoid silent Gmail TLS issues
+  },
+});
+
+transporter.verify(function (error, success) {
+  if (error) {
+    console.log("SMTP ERROR:", error);
+  } else {
+    console.log("SMTP READY TO SEND EMAILS");
+  }
 });
 
 
@@ -526,15 +537,20 @@ const registerUser = async (req, res) => {
     // =========================
     // 8. EMAILS (NON-BLOCKING)
     // =========================
-    setImmediate(() => {
-      sendRegistrationMail(
-        newUser.email,
-        newUser.name,
-        newUser.userId
-      );
+   setImmediate(async () => {
+  try {
+    await sendRegistrationMail(
+      newUser.email,
+      newUser.name,
+      newUser.userId
+    );
 
-      sendAdminNotification(newUser);
-    });
+    await sendAdminNotification(newUser);
+
+  } catch (err) {
+    console.log("EMAIL EXECUTION ERROR:", err.message);
+  }
+});
 
   } catch (error) {
     console.error("REGISTER ERROR:", error);

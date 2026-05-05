@@ -393,7 +393,7 @@ if (existingUser) {
 
 
     console.log("✅ USER SAVED AFTER PAYMENT:", email);
-    
+
     await sendRegistrationMail(newUser.email, newUser.name, newUser.userId);
     sendAdminNotification(newUser);
 
@@ -401,6 +401,7 @@ if (existingUser) {
       message: "User registered successfully",
         userId: newUser.userId, 
       user: newUser,
+      debug: "USER SAVED AFTER PAYMENT"
     });
 
   } catch (error) {

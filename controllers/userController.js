@@ -353,18 +353,30 @@ const registerUser = async (req, res) => {
       });
     }
 
+    // const existingUser = await User.findOne({ email });
+
+    // if (existingUser) {
+    //   return res.status(400).json({
+    //     message: "Email already exists, please login",
+    //   });
+    // }
+
     const existingUser = await User.findOne({ email });
 
-    if (existingUser) {
-      return res.status(400).json({
-        message: "Email already exists, please login",
-      });
-    }
+if (existingUser) {
+  console.log("Duplicate registration blocked:", email);
+
+  return res.status(400).json({
+    message: "Email already exists, please login",
+  });
+}
+
 
     // ✅ Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-        const generatedUserId = `KAO-${Math.floor(100000 + Math.random() * 900000)}`;
+        // const generatedUserId = `KAO-${Math.floor(100000 + Math.random() * 900000)}`;
+        const generatedUserId = `KAO-${Date.now().toString().slice(-6)}`;
 
 
     const newUser = await User.create({

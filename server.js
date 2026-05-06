@@ -55,7 +55,7 @@ app.use(cors({
   origin: [
     "http://localhost:5173",
     "https://kao-farm-website.netlify.app",
-    "delicate-syrniki-900d6b.netlify.app"
+    "https://delicate-syrniki-900d6b.netlify.app"
   ],
   credentials: true
 }));

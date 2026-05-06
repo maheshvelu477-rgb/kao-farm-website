@@ -38,6 +38,9 @@ require("dotenv").config({ path: path.resolve(__dirname, ".env") });
 const connectDB = require("./config/db");
 const userRoutes = require("./routes/userRoutes");
 
+const contactRoutes = require("./routes/contactRoutes");
+
+
 
 // Force DNS
 dns.setServers(["8.8.8.8", "8.8.4.4"]);
@@ -51,7 +54,8 @@ const app = express();
 app.use(cors({
   origin: [
     "http://localhost:5173",
-    "https://kao-farm-website.netlify.app"
+    "https://kao-farm-website.netlify.app",
+    "delicate-syrniki-900d6b.netlify.app"
   ],
   credentials: true
 }));
@@ -75,6 +79,7 @@ app.use("/public", express.static(path.join(__dirname, "public")));
 
 // Routes
 app.use("/api/users", userRoutes);
+app.use("/api/contact", contactRoutes);
 
  app.get("/", (req, res) => {
   res.send("KAO FARM Backend is Running 🚀");

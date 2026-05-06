@@ -54,11 +54,14 @@ const app = express();
 app.use(cors({
   origin: [
     "http://localhost:5173",
-    "https://kao-farm-website.netlify.app",
+    // "https://kao-farm-website.netlify.app",
     "https://delicate-syrniki-900d6b.netlify.app"
   ],
   credentials: true
 }));
+
+
+
 
 app.use(express.json({ limit: "10mb" })); // for image base64
 

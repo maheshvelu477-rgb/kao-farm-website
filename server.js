@@ -177,15 +177,13 @@ app.get("/", (req, res) => {
 
 // ✅ Start server FIRST, then connect to DB
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on port ${PORT}`);
   console.log("EMAIL_USER:", process.env.EMAIL_USER);
   console.log("EMAIL_PASS:", process.env.EMAIL_PASS?.length ? "LOADED" : "MISSING");
   console.log("MONGO_URI:", process.env.MONGO_URI ? "LOADED" : "MISSING ⚠️");
 
-  // Connect DB after server is up
   connectDB().catch(err => {
     console.error("Startup DB error:", err.message);
-    // Server stays alive — DB routes will fail gracefully
   });
 });

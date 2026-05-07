@@ -33,7 +33,8 @@ const cors = require("cors");
 // const dotenv = require("dotenv");
 const path = require("path");
 const dns = require("dns");
-require("dotenv").config({ path: path.resolve(__dirname, ".env") });
+// require("dotenv").config({ path: path.resolve(__dirname, ".env") });
+require("dotenv").config();
 
 const connectDB = require("./config/db");
 const userRoutes = require("./routes/userRoutes");

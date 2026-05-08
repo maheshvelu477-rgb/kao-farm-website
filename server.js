@@ -144,6 +144,7 @@ const cors = require("cors");
 const path = require("path");
 // const dns = require("dns");
 // require("dotenv").config();
+require("dotenv").config({ path: path.resolve(__dirname, ".env") });
 const connectDB = require("./config/db");
 const userRoutes = require("./routes/userRoutes");
 const contactRoutes = require("./routes/contactRoutes");

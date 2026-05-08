@@ -142,13 +142,13 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
-const dns = require("dns");
+// const dns = require("dns");
 require("dotenv").config();
 const connectDB = require("./config/db");
 const userRoutes = require("./routes/userRoutes");
 const contactRoutes = require("./routes/contactRoutes");
 
-dns.setServers(["8.8.8.8", "8.8.4.4"]);
+// dns.setServers(["8.8.8.8", "8.8.4.4"]);
 
 const app = express();
 

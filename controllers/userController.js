@@ -177,7 +177,7 @@
 
 
 const User = require("../models/User");
- const bcrypt = require("bcryptjs");
+const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
 
 console.log("EMAIL_USER:", process.env.EMAIL_USER);
@@ -537,20 +537,27 @@ const registerUser = async (req, res) => {
     // =========================
     // 8. EMAILS (NON-BLOCKING)
     // =========================
-   setImmediate(async () => {
-  try {
-    await sendRegistrationMail(
-      newUser.email,
-      newUser.name,
-      newUser.userId
-    );
+//    setImmediate(async () => {
+//   try {
+//     await sendRegistrationMail(
+//       newUser.email,
+//       newUser.name,
+//       newUser.userId
+//     );
 
-    await sendAdminNotification(newUser);
+//     await sendAdminNotification(newUser);
 
-  } catch (err) {
-    console.log("EMAIL EXECUTION ERROR:", err.message);
-  }
-});
+//   } catch (err) {
+//     console.log("EMAIL EXECUTION ERROR:", err.message);
+//   }
+// });
+
+try {
+  await sendRegistrationMail(newUser.email, newUser.name, newUser.userId);
+  await sendAdminNotification(newUser);
+} catch (err) {
+  console.log("EMAIL ERROR:", err.message);
+}
 
   } catch (error) {
     console.error("REGISTER ERROR:", error);

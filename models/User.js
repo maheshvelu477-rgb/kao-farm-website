@@ -35,6 +35,11 @@ userId: {
 
     passportActive: { type: Boolean, default: true },
     subscription: { type: String, default: "Free" },
+
+     // ── Forgot password ──────────────────────────
+    resetPasswordToken: { type: String },
+    resetPasswordExpires: { type: Date },
+    // ─────────────────────────────────────────────
   },
   { timestamps: true }
 );

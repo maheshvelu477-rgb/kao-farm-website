@@ -641,9 +641,122 @@ const loginUser = async (req, res) => {
 
 
 
+
+
+
+
+// =========================
+// FORGOT PASSWORD
+// =========================
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+ 
+    const user = await User.findOne({ email });
+ 
+    // Always return 200 — never reveal whether email exists
+    if (!user) {
+      return res.status(200).json({ message: "Reset link sent. Check your email." });
+    }
+ 
+    // Generate secure token, valid for 1 hour
+    const token = crypto.randomBytes(32).toString("hex");
+    user.resetPasswordToken = token;
+    user.resetPasswordExpires = Date.now() + 60 * 60 * 1000;
+    await user.save();
+ 
+    const resetURL = `${process.env.CLIENT_URL}/reset-password/${token}`;
+ 
+    await transporter.sendMail({
+      from: `"KAO FARM" <${process.env.EMAIL_USER}>`,
+      to: user.email,
+      subject: "Reset your KaoFarm password",
+      html: `
+<div style="font-family: Arial, sans-serif; background:#f4f6f8; padding:30px;">
+  <div style="max-width:600px; margin:auto; background:#ffffff; border-radius:10px; overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,0.08);">
+    <div style="background:#254F07; color:#fff; padding:20px 30px;">
+      <h2 style="margin:0;">KAO FARM</h2>
+      <p style="margin:5px 0 0; font-size:13px; opacity:0.8;">Password Reset Request</p>
+    </div>
+    <div style="padding:30px;">
+      <h3 style="margin-top:0; color:#254F07;">Hi ${user.name},</h3>
+      <p style="color:#555; line-height:1.6;">
+        We received a request to reset your password. Click the button below — this link expires in <strong>1 hour</strong>.
+      </p>
+      <div style="text-align:center; margin:28px 0;">
+        <a href="${resetURL}"
+          style="background:#254F07; color:#fff; padding:13px 28px; text-decoration:none; border-radius:8px; font-size:14px; font-weight:600; display:inline-block;">
+          Reset My Password
+        </a>
+      </div>
+      <p style="color:#999; font-size:12px; text-align:center;">
+        If you didn't request this, you can safely ignore this email. Your password won't change.
+      </p>
+    </div>
+    <div style="background:#f9fafb; padding:15px 30px; text-align:center; font-size:12px; color:#888;">
+      © 2026 KAO FARM. All rights reserved.
+    </div>
+  </div>
+</div>
+`,
+    });
+ 
+    console.log("✅ Reset email sent to:", user.email);
+    res.status(200).json({ message: "Reset link sent. Check your email." });
+ 
+  } catch (error) {
+    console.error("FORGOT PASSWORD ERROR:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+ 
+ 
+// =========================
+// RESET PASSWORD
+// =========================
+const resetPassword = async (req, res) => {
+  try {
+    const { token } = req.params;
+    const { password } = req.body;
+ 
+    if (!password || password.length < 6) {
+      return res.status(400).json({ message: "Password must be at least 6 characters." });
+    }
+ 
+    // Find user with a valid, non-expired token
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now() },
+    });
+ 
+    if (!user) {
+      return res.status(400).json({ message: "Reset link is invalid or has expired." });
+    }
+ 
+    user.password = await bcrypt.hash(password, 10);
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+ 
+    console.log("✅ Password reset successful for:", user.email);
+    res.status(200).json({ message: "Password reset successful. You can now log in." });
+ 
+  } catch (error) {
+    console.error("RESET PASSWORD ERROR:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+
+
+
+
 module.exports = {
   registerUser,
   getUser,
   loginUser,
+   forgotPassword,
+  resetPassword,
 };
 

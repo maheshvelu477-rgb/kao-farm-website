@@ -31,7 +31,9 @@ const router = express.Router();
 const {
   registerUser,
   getUser,
-  loginUser
+  loginUser,
+   forgotPassword,
+  resetPassword,
 } = require("../controllers/userController");
 
 // =========================
@@ -45,5 +47,16 @@ router.post("/register", registerUser);
 // use query instead of param (safer for special characters like @)
 router.get("/email", getUser);
 router.post("/login", loginUser);
+
+
+// =========================
+// FORGOT PASSWORD
+// =========================
+router.post("/forgot-password", forgotPassword);
+ 
+// =========================
+// RESET PASSWORD
+// =========================
+router.post("/reset-password/:token", resetPassword);
 
 module.exports = router;
